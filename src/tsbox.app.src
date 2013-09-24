@@ -1,0 +1,12 @@
+{application, tsbox,
+ [
+  {description, "tsbox"},
+  {vsn, git},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { tsbox_app, []}},
+  {env, []}
+ ]}.
