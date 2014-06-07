@@ -5,7 +5,7 @@
 
 %% API
 -export([start_link/0, stop/0]).
--export([current/0, compare/2]).
+-export([current/0, future/2, compare/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -24,12 +24,18 @@ stop() ->
 current() ->
     gen_server:call(?SERVER, current).
 
-compare(Ts, Ts) ->
+future(Ts, Ts) ->
     identical;
-compare(Ts1, Ts2) when Ts2 < Ts1 ->
-    descendant;
-compare(Ts1, Ts2) when Ts1 < Ts2 ->
-    ascendant.
+future(Ts1, Ts2) ->
+    max(Ts1, Ts2).
+
+compare(Ts1, Ts2) ->
+    case future(Ts1, Ts2) of
+        Ts1        -> descendant;
+        Ts2        -> ascendant;
+        identical  -> identical;
+        concurrent -> concurrent
+    end.
 
 init([]) ->
     {ok, #state{}}.
