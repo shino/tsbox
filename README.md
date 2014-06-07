@@ -1,64 +1,62 @@
-tsbox
-=====
+# tsbox
 
-Library of history management and selection logic which forms the foundation of
-timestamp-based transaction control.
+tsbox is an erlang library of history management and selection logic
+which forms the foundation of timestamp-based transaction control.
 
-Scope
------
 
-- Keeping timestamped history data, some versions may be conflicted and/or concurrent.
-- Timestamp can be total ordered or partial ordered.
-  The outcome of partial ordered timestamp may lead to some annoying behavior.
+# Scope
+
+- Keeping timestamped history data, some versions may be conflicted
+  and/or concurrent.
+- Timestamp can be total ordered or partial ordered.  The outcome of
+  partial ordered timestamp may lead to some annoying behavior.
   Investigatin such outcome is included in this prototype's scope.
-- Supplying timestamp and preserving commit log are **out of scope**.
-  Nonetheless very simple (and stuid) timestamp supplier and commit log server
-  is inlcuded in this repository for reference/testing.
+- Supplying timestamp and preserving commit log are out of scope.
+  Nonetheless very simple (and stuid) timestamp supplier and commit
+  log server is inlcuded in this repository for reference/testing.
 
-Supposed System Description and responsibility of this repository
------------------------------------------------------------------
+# Supposed System Description and the Responsibility of tsbox
 
 Consider three components which communicate with each other and
 maintain transacional data in coordinated manner.
 
 1. Timestamp management
-2. Timestamped data management
+2. Timestamped (~ history) data management
 3. Commit log management
 
-Timestamp management
-^^^^^^^^^^^^^^^^^^^^
+## Timestamp management
 
 Interface:
 
 - Reply timestamp for a request.
 
-Timestamped data management
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+## Timestamped data management
 
 This library forms a part of this component.
 
 Interface:
 
 - Reply "current" data for a read request with a key and a timestamp.
-- Preserve "new" data for a write request and reply a result, ok/busy/conflicted.
+- Receive "new" data for a write request and reply a result,
+  ok/busy/conflicted.
 
-  - ok: data is preserved, no confliction
-  - busy: there is already conflicted data, not preserved
-  - conflicted: data is preserved but conflicted
+  - ok: data is stored, no confliction
+  - busy: there is already conflicted data, not storead
+  - conflicted: data is storead but conflicted
 
 - Garbage collection (TODO)
 
-Commit log management
-^^^^^^^^^^^^^^^^^^^^^
+## Commit log management
 
 Interface:
 
 - Accept "begin transaction" request and keep it with expiring time.
 - Accept "commit transaction" request and modify the state.
 - Accept "rollback transaction" request and modify the state.
-- Accept "force abort transaction" request and judge its validity and modify the state.
-  Only this kind of request can be issued from any actor, i.e. can be issued by
-  a actor which is other than transaction owner.
+- Accept "force abort transaction" request and judge its validity and
+  modify the state.  Only this kind of request can be issued from any
+  actor, i.e. can be issued by a actor which is other than transaction
+  owner.
 
 Assumption:
 
@@ -67,15 +65,14 @@ Assumption:
 
   TODO: VALIDITY? Can there be a actor with awfully corrupted clock?
 
-Terminology
------------
+# Terminology
+
+TODO
 
 
-Transaction state transition
-----------------------------
+# Transaction state transition
 
-::
-
+```
    O  --(begin)--> initialized
                       |
                       +--(commit)--> committed [final state]
@@ -85,15 +82,14 @@ Transaction state transition
                       +--(timeout?)-->
                       |
                       +--(abort)--> aborted [final state]
+```
 
 
-License
--------
+# License
 
 Apache License Version 2.0
 
-Reference
----------
+# Reference
 
 - Timestamp-based concurrency control
 
